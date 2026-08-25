@@ -42,11 +42,11 @@ func (s *Server) health(w http.ResponseWriter, _ *http.Request) {
 
 func (s *Server) status(w http.ResponseWriter, _ *http.Request) {
 	writeJSON(w, http.StatusOK, map[string]any{
-		"service":       "goreecloud-documents",
-		"lifecycle":     "development",
-		"api_version":   "v1",
+		"service":        "goreecloud-documents",
+		"lifecycle":      "development",
+		"api_version":    "v1",
 		"native_product": true,
-		"started_at":    s.startedAt,
+		"started_at":     s.startedAt,
 		"capabilities": []string{
 			"domain-foundation",
 			"processing-contracts",
