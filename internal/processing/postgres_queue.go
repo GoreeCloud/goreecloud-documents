@@ -9,13 +9,12 @@ import (
 )
 
 type PostgresQueue struct {
-	DB  *sql.DB
-	Now func() time.Time
+	DB *sql.DB
 }
 
 func (q PostgresQueue) Claim(jobType JobType) (Job, error) {
 	if q.DB == nil {
-		return Job{}, ErrQueueUnavailable
+		return Job{}, fmt.Errorf("processing queue unavailable")
 	}
 	row := q.DB.QueryRowContext(context.Background(), `
 WITH candidate AS (
@@ -34,12 +33,12 @@ RETURNING jobs.id::text, jobs.document_id::text, jobs.job_type, jobs.state, jobs
 	return scanJob(row)
 }
 
-func (q PostgresQueue) Complete(id string) (Job, error) { return q.transition(id, JobCompleted, 0) }
-func (q PostgresQueue) Fail(id string) (Job, error)     { return q.transition(id, JobFailed, 0) }
+func (q PostgresQueue) Complete(id string) (Job, error) { return q.transition(id, JobCompleted) }
+func (q PostgresQueue) Fail(id string) (Job, error)     { return q.transition(id, JobFailed) }
 
 func (q PostgresQueue) Retry(id string, delay time.Duration) (Job, error) {
 	if q.DB == nil {
-		return Job{}, ErrQueueUnavailable
+		return Job{}, fmt.Errorf("processing queue unavailable")
 	}
 	if delay < 0 {
 		return Job{}, fmt.Errorf("retry delay must not be negative")
@@ -52,9 +51,9 @@ RETURNING id::text, document_id::text, job_type, state, attempts, available_at, 
 	return scanJob(row)
 }
 
-func (q PostgresQueue) transition(id string, state JobState, _ time.Duration) (Job, error) {
+func (q PostgresQueue) transition(id string, state JobState) (Job, error) {
 	if q.DB == nil {
-		return Job{}, ErrQueueUnavailable
+		return Job{}, fmt.Errorf("processing queue unavailable")
 	}
 	row := q.DB.QueryRowContext(context.Background(), `
 UPDATE processing_jobs
@@ -71,7 +70,7 @@ func scanJob(row rowScanner) (Job, error) {
 	var typ, state string
 	if err := row.Scan(&job.ID, &job.DocumentID, &typ, &state, &job.Attempts, &job.Available, &job.CreatedAt, &job.UpdatedAt); err != nil {
 		if errors.Is(err, sql.ErrNoRows) {
-			return Job{}, ErrNoAvailableJob
+			return Job{}, ErrJobNotFound
 		}
 		return Job{}, fmt.Errorf("processing queue: %w", err)
 	}
