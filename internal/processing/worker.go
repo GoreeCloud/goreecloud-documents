@@ -22,10 +22,10 @@ type Handler interface {
 }
 
 type Worker struct {
-	Queue      Queue
-	Handler    Handler
-	JobType    JobType
-	RetryDelay time.Duration
+	Queue       Queue
+	Handler     Handler
+	JobType     JobType
+	RetryDelay  time.Duration
 	MaxAttempts int
 }
 
