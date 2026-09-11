@@ -1,0 +1,24 @@
+# Build output
+/goreecloud-documents
+/bin/
+/dist/
+
+# Go test/build artifacts
+*.test
+*.out
+coverage.out
+
+# Local development state
+.env
+.env.*
+!.env.example
+*.db
+*.sqlite
+*.sqlite3
+/data/
+/tmp/
+
+# Editors and operating systems
+.DS_Store
+.idea/
+.vscode/

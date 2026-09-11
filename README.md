@@ -10,33 +10,38 @@ Capture → OCR → Extract → Classify → Organize → Search → Automate �
 
 ## Current development state
 
-Lifecycle: **Development — Milestone 1 native foundation**
+Lifecycle: **Development / nonconformant**
 
-The current source foundation includes:
+The current source includes:
 
 - Native Go service and loopback-safe development entry point.
-- `GET /healthz` and `GET /api/v1/status` development endpoints.
-- First-party document domain model and validation invariants.
-- Durable processing-job contracts for ingestion, OCR, indexing, and extraction.
-- PostgreSQL foundation schema for documents, pages, and processing jobs.
-- OCR provider abstraction so OCR engines remain supporting components rather than product authority.
-- Search-index abstraction that keeps authorization decisions inside GoreeCloud Documents.
-- Privacy-conscious HTTP response headers and no-store API responses.
-- Automated formatting, test, vet, and build validation through GitHub Actions.
+- `GET /healthz` and `GET /api/v1/status` bounded Development diagnostics.
+- First-party document and processing domain contracts.
+- PostgreSQL foundation schema and PostgreSQL document-metadata repository adapter.
+- Immutable original-file storage abstraction with a private local filesystem adapter and SHA-256 integrity recording.
+- Native ingestion orchestration that preserves original bytes before authoritative metadata creation.
+- OCR-provider and search-index adapter boundaries.
+- Bounded processing queue with atomic single-worker claim, attempts, delayed retry, completion, and failure transitions.
+- PostgreSQL-backed implementation of the processing queue contract.
+- Transport-neutral bounded processing-worker orchestration.
+- Privacy-conscious API response headers.
+- Automated formatting, test, vet, build, and Platform Contract validation through GitHub Actions.
 
-This checkpoint does **not** establish production authentication, persistent runtime database wiring, file ingestion, OCR execution, full-text indexing, AI classification, production deployment, Stable qualification, or replacement of any existing document-management service.
+This checkpoint does **not** establish runtime PostgreSQL connection/driver wiring, crash-safe worker leasing, executable OCR or indexing workers, production authentication/authorization, full-text search, AI classification, Glaze UI application surfaces, accepted Integral Platform System runtime integration, production deployment, Release Candidate, Stable qualification, or replacement of an existing production document-management service.
 
 ## Architecture direction
 
 GoreeCloud Documents owns document lifecycle, metadata, processing state, authorization, organization, search policy, workflow behavior, collaboration, and preservation semantics. Supporting libraries and engines may provide OCR, PDF parsing, indexing, cryptography, database connectivity, and standards compatibility through explicit adapter boundaries.
 
-The application integrates with GoreeCloud platform systems rather than treating them as decorative labels:
+All seven Integral Platform Systems are evaluated independently:
 
-- **Glaze UI** — adaptive visual and interaction language.
-- **Wardveil Security** — protection state, security contracts, and evidence-backed security experiences.
-- **Privacy Shield** — privacy controls, minimization, and privacy-state contracts.
+- **GoreeCloud Manager** — application administration and management integration.
+- **Privacy Shield** — privacy authorization, minimization, processing, retention, and sharing boundaries.
+- **Wardveil Security** — security contracts and evidence-backed protection state.
 - **Everkeep** — resilience, recovery, preservation, portability, succession, and digital legacy.
-- **GoreeCloud Mesh** — application/service coordination and governance plane.
+- **Glaze UI** — adaptive visual and interaction language; current required Stable consumer target is V1.3 / 1.3.0.
+- **GoreeCloud Mesh** — application/service coordination and governed cross-product capability exchange.
+- **GoreeCloud Identity** — authenticated identity and claims; Documents remains responsible for application authorization.
 
 Planned first-party integrations include GoreeCloud AI, Search, Drive, Mail, Backup, Identity, Notify, Monitor, and Mesh through explicit, versioned, least-privilege interfaces.
 
@@ -60,7 +65,9 @@ go build ./cmd/goreecloud-documents
 GOREECLOUD_DOCUMENTS_LISTEN=127.0.0.1:8790 go run ./cmd/goreecloud-documents
 ```
 
-The development service intentionally binds to loopback by default. Public or production publication requires separate authentication, authorization, deployment, security, privacy, recovery, observability, and exact-release acceptance work.
+The Development service intentionally binds to loopback by default. Public or production publication requires separate authentication, authorization, deployment, security, privacy, recovery, observability, and exact-release acceptance work.
+
+See `SPECIFICATIONS.md`, `FEATURES.md`, `FEATURE-ROADMAP.md`, `SECURITY.md`, `PRIVACY POLICY.md`, and `goreecloud.platform.yaml` for the repository-side governed boundaries.
 
 ## License
 

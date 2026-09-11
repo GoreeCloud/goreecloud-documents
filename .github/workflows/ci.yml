@@ -12,12 +12,23 @@ permissions:
 jobs:
   go:
     runs-on: ubuntu-latest
+    env:
+      CANDIDATE_REVISION: ${{ github.event_name == 'pull_request' && github.event.pull_request.head.sha || github.sha }}
     steps:
-      - name: Check out source
-        uses: actions/checkout@v4
+      - name: Check out exact candidate
+        uses: actions/checkout@d23441a48e516b6c34aea4fa41551a30e30af803
+        with:
+          ref: ${{ env.CANDIDATE_REVISION }}
+          persist-credentials: false
+
+      - name: Verify exact candidate revision
+        shell: bash
+        run: |
+          set -euo pipefail
+          test "$(git rev-parse HEAD)" = "$CANDIDATE_REVISION"
 
       - name: Set up Go
-        uses: actions/setup-go@v5
+        uses: actions/setup-go@40f1582b2485089dde7abd97c1529aa768e1baff
         with:
           go-version: '1.25.x'
           cache: false
@@ -38,3 +49,9 @@ jobs:
 
       - name: Build service
         run: go build ./cmd/goreecloud-documents
+
+  platform-contract:
+    name: Validate exact GoreeCloud Platform Contract
+    uses: GoreeCloud/GoreeCloud/.github/workflows/reusable-platform-manifest.yml@235e519fe342d7e7075c8239fbf0f3a19dc4c6c8
+    with:
+      manifest-path: goreecloud.platform.yaml
