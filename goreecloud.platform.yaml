@@ -1,0 +1,145 @@
+schema_version: "0.2"
+
+component:
+  type: application
+  id: goreecloud-documents
+  product_name: GoreeCloud Documents
+  repository: GoreeCloud/goreecloud-documents
+
+lifecycle: development
+version: "development-unversioned"
+
+supported_platforms:
+  - linux-development
+
+api:
+  versions:
+    - v1-development
+  endpoints:
+    - name: health
+      url: /healthz
+      purpose: Bounded Development liveness diagnostic.
+    - name: status
+      url: /api/v1/status
+      purpose: Bounded Development application-status diagnostic.
+
+platform_systems:
+  manager:
+    result: applicable-blocked
+    version: null
+    evidence:
+      - SPECIFICATIONS.md
+      - README.md
+    notes: GoreeCloud Manager registration, administration integration, and runtime acceptance are not established.
+  privacy_shield:
+    result: applicable-blocked
+    version: null
+    evidence:
+      - PRIVACY POLICY.md
+      - SPECIFICATIONS.md
+    notes: Privacy requirements are defined, but accepted Privacy Shield runtime authorization, retention, sharing, AI-processing, and data-lifecycle enforcement are not established.
+  wardveil_security:
+    result: applicable-blocked
+    version: null
+    evidence:
+      - SECURITY.md
+      - README.md
+    notes: Development loopback and source validation boundaries exist, but Wardveil Security runtime integration and application acceptance are not established.
+  everkeep:
+    result: applicable-blocked
+    version: null
+    evidence:
+      - SPECIFICATIONS.md
+      - PRIVACY POLICY.md
+    notes: Preservation, portability, backup, restore, and archival requirements are defined, but Everkeep runtime integration and recovery acceptance are not established.
+  glaze_ui:
+    result: applicable-blocked
+    version: null
+    evidence:
+      - SPECIFICATIONS.md
+      - FEATURES.md
+    notes: GLAZE UI V1.3 / 1.3.0 is the required Stable consumer target, but no accepted Documents client implementation or rendered/accessibility evidence exists.
+  mesh:
+    result: applicable-blocked
+    version: null
+    evidence:
+      - SPECIFICATIONS.md
+    notes: GoreeCloud Mesh coordination is required for approved cross-application workflows, but capability registration, event integration, and runtime acceptance are not established.
+    capabilities: []
+    dependencies: []
+    published_events: []
+    consumed_events: []
+  identity:
+    result: applicable-blocked
+    version: null
+    evidence:
+      - SECURITY.md
+      - SPECIFICATIONS.md
+    notes: Multi-user authorization and GoreeCloud Identity integration are required, but authenticated runtime integration and acceptance are not established.
+
+health:
+  health_endpoint: /healthz
+  readiness_endpoint: null
+
+continuity:
+  backup:
+    required: true
+    requirements:
+      - Preserve original documents, authoritative metadata, relationships, processing state, and policy configuration according to approved retention and protection rules.
+      - Keep reusable credentials and secrets outside ordinary backup material unless an approved protected recovery format explicitly includes them.
+  restore:
+    required: true
+    requirements:
+      - Validate restored originals, metadata relationships, integrity values, and application schema before declaring recovery successful.
+      - Prove recovery without silently substituting regenerated derivatives for authoritative originals.
+  export:
+    required: true
+    requirements:
+      - Provide a versioned portable export for permitted original files and metadata before production portability is claimed.
+  portability:
+    required: true
+    requirements:
+      - Keep original files and portable metadata independently preservable where practical.
+      - Document migration and compatibility behavior for supported export/import formats.
+
+external_dependencies: []
+
+compatibility:
+  platform_contract: "0.2"
+  glaze_ui_required: "1.3.0"
+  requires:
+    - goreecloud-platform-contract==0.2
+    - goreecloud-glaze-ui==1.3.0
+  provides:
+    - goreecloud-documents-development-api
+
+evidence:
+  acceptance_tests: []
+  release: []
+
+conformance:
+  status: nonconformant
+  validated_at: null
+  evidence:
+    - README.md
+    - SPECIFICATIONS.md
+    - FEATURES.md
+    - SECURITY.md
+    - PRIVACY POLICY.md
+    - internal/document/document_test.go
+    - internal/httpapi/server_test.go
+    - internal/ingest/service_test.go
+    - internal/ingest/storage_test.go
+    - internal/processing/queue_test.go
+    - internal/processing/worker_test.go
+  blockers:
+    - Runtime PostgreSQL connection and driver configuration are not integrated into the application runtime.
+    - Durable worker leases and crash recovery across processes are not accepted.
+    - Executable OCR, extraction, and full-text indexing workers are not implemented or accepted.
+    - Production authentication, application authorization, and GoreeCloud Identity integration are not established.
+    - Glaze UI application surfaces and rendered/accessibility acceptance are not established.
+    - Privacy Shield runtime integration and acceptance are not established.
+    - Wardveil Security runtime integration and acceptance are not established.
+    - Everkeep backup, restore, export, portability, and recovery acceptance are not established.
+    - GoreeCloud Manager and Mesh runtime integration and acceptance are not established.
+    - Production deployment, observability, migration, rollback, release, and Stable qualification remain outstanding.
